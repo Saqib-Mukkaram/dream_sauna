@@ -40,7 +40,7 @@ dependencies:
   http: ^1.1.0
   share_plus: ^7.1.0
   pay: ^1.1.0
-  image_picker: ^1.1.1
+  image_picker: ^1.0.4
   path_provider: ^2.0.13
   form_field_validator: ^1.1.0
   custom_radio_grouped_button: ^2.1.2+2
