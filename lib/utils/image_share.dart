@@ -49,102 +49,108 @@ class _ImageShareState extends State<ImageShare> {
           title: Text("Share Card"),
         ),
         body: Center(
-          child: RepaintBoundary(
-            key: globalKey,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Card(
-                  elevation: 8,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                          ui.Color.fromARGB(255, 9, 155, 187),
-                          ui.Color.fromARGB(255, 7, 169, 206),
-                          ui.Color.fromARGB(255, 102, 227, 255),
-                          ui.Color.fromARGB(255, 0, 208, 255),
-                        ],
-                            stops: const [
-                          0.1,
-                          0.3,
-                          0.9,
-                          1.0
-                        ])),
-                    height: 575,
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 8,
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                      ui.Color.fromARGB(255, 245, 166, 35),
+                      ui.Color.fromARGB(255, 242, 191, 58),
+                      ui.Color.fromARGB(255, 255, 220, 94),
+                      ui.Color.fromARGB(255, 255, 194, 71)
+
+                      // ui.Color.fromARGB(255, 9, 155, 187),
+                      // ui.Color.fromARGB(255, 7, 169, 206),
+                      // ui.Color.fromARGB(255, 102, 227, 255),
+                      // ui.Color.fromARGB(255, 0, 208, 255),
+                    ],
+                        stops: const [
+                      0.1,
+                      0.3,
+                      0.7,
+                      1.0
+                    ])),
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 16, right: 16, top: 8, bottom: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.file(
+                              File(widget.qrCode.path),
+                              fit: BoxFit.contain,
+                              height: 300,
+                              width: 300,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Image.file(
-                                File(widget.qrCode.path),
-                                fit: BoxFit.cover,
-                                height: 300,
-                                width: 300,
-                              ),
+                            Text(
+                              widget.type == 'merchant'
+                                  ? "Merchant: "
+                                  : "Contractor: ",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            Text(
+                              widget.username,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.type == 'merchant'
-                                      ? "Merchant: "
-                                      : "Contractor: ",
-                                  style: TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                ),
-                                Text(
-                                  widget.username,
-                                  style: TextStyle(
-                                      fontSize: 24, fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "Email: ",
-                                  style: TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                ),
-                                Text(
-                                  widget.email,
-                                  style: TextStyle(
-                                      fontSize: 24, fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "Address: ",
-                                  style: TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                                Text(
-                                  widget.bussinessAddress,
-                                  style: TextStyle(
-                                      fontSize: 24, fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                            Text(
+                              "Email: ",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
-                          ]),
-                    ),
-                  ),
+                            Text(
+                              widget.email,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "Address: ",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                            Text(
+                              widget.bussinessAddress,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            )
+                          ],
+                        ),
+                      ]),
                 ),
               ),
             ),
