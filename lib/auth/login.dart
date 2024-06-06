@@ -218,31 +218,28 @@ class _LogInScreeenState extends State<LogInScreeen> {
                                 )),
                           ),
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.height * 0.19,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                  child: OutlinedButton(
-                                      onPressed: () => {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ForgetPassword()))
-                                      },
-                                      style: OutlinedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(18.0),
-                                        ),
-                                        side: const BorderSide(
-                                            width: 2, color: Color(0xFF099BBB)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                                child: OutlinedButton(
+                                    onPressed: () => {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ForgetPassword()))
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(18.0),
                                       ),
-                                      child: const Text('Forget Password')))
-                            ],
-                          ),
+                                      side: const BorderSide(
+                                          width: 2, color: Color(0xFF099BBB)),
+                                    ),
+                                    child: const Text('Forget Password')))
+                          ],
                         ),
                         Container(
                           width: MediaQuery.of(context).size.height * 0.08,

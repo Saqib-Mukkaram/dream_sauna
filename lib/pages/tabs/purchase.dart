@@ -70,8 +70,7 @@ class _PurchaseState extends State<Purchase> {
   }
 
   getuser() async {
-    setState(() {
-    });
+    setState(() {});
     await UserService().getUser().then((value) {
       userToken = value["data"]["api_token"];
       name = value["data"]["name"];
@@ -106,11 +105,13 @@ class _PurchaseState extends State<Purchase> {
       print(response.statusCode);
     }
   }
+
   getAndroidId() async {
     setState(() {
       loader = true;
     });
-    var url = Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages/android/ids');
+    var url = Uri.parse(
+        'http://calcsoft.saunamaterialkit.com/api/pakages/android/ids');
     var response = await http.get(url, headers: {
       "Accept": "application/json",
       "Authorization": "Bearer " + userToken.toString()
@@ -120,10 +121,11 @@ class _PurchaseState extends State<Purchase> {
         loader = false;
       });
       setState(() {
-        androidIds = (jsonDecode(response.body) as List).map((e) => e as String).toList();
+        androidIds = (jsonDecode(response.body) as List)
+            .map((e) => e as String)
+            .toList();
 
-        _productIds = Platform.isAndroid ? androidIds: isoIds;
-
+        _productIds = Platform.isAndroid ? androidIds : isoIds;
       });
     } else {
       setState(() {
@@ -132,11 +134,13 @@ class _PurchaseState extends State<Purchase> {
       print(response.statusCode);
     }
   }
+
   isoId() async {
     setState(() {
       loader = true;
     });
-    var url = Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages/iso/ids');
+    var url =
+        Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages/iso/ids');
     var response = await http.get(url, headers: {
       "Accept": "application/json",
       "Authorization": "Bearer " + userToken.toString()
@@ -146,8 +150,10 @@ class _PurchaseState extends State<Purchase> {
         loader = false;
       });
       setState(() {
-        isoIds = (jsonDecode(response.body) as List).map((e) => e as String).toList();
-        _productIds = Platform.isAndroid ? androidIds: isoIds;
+        isoIds = (jsonDecode(response.body) as List)
+            .map((e) => e as String)
+            .toList();
+        _productIds = Platform.isAndroid ? androidIds : isoIds;
       });
     } else {
       setState(() {
@@ -219,50 +225,54 @@ class _PurchaseState extends State<Purchase> {
     return Scaffold(
         body: loader
             ? const SpinKitFadingCircle(
-          // duration: Duration(milliseconds: 10000),
-          color: Colors.black,
-          size: 50.0,
-        )
+                // duration: Duration(milliseconds: 10000),
+                color: Colors.black,
+                size: 50.0,
+              )
             : Column(
-      children: <Widget>[
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: SingleChildScrollView(
-                child: Column(children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Column(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Hi, ' + name.toString(),
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20)
+                children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 5),
+                      child: SingleChildScrollView(
+                          child: Column(children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Hi, ' + name.toString(),
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            SizedBox(height: 20)
+                          ],
+                        ),
+                        _buildConnectionCheckTile(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ]))),
+                  Expanded(
+                      child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      if (!_notFoundIds.contains(_productIds[index]) &&
+                          _queryProductError == null &&
+                          _isAvailable)
+                        return _buildPremiumProductTile(_productIds[index],
+                            pakages[index]['name'].toString());
+                      //
+                      if (_notFoundIds.contains(_productIds[index]))
+                        return Text('');
+                    },
+                    itemCount: _productIds.length,
+                  )),
                 ],
-              ),
-              _buildConnectionCheckTile(),
-              const SizedBox(
-                height: 20,
-              ),
-            ]))),
-        Expanded(
-          child: ListView.builder(itemBuilder: (context, index) {
-            if (!_notFoundIds.contains(_productIds[index]) && _queryProductError == null && _isAvailable)
-              return _buildPremiumProductTile(_productIds[index], pakages[index]['name'].toString());
-            //
-            if (_notFoundIds.contains(_productIds[index]))
-              return Text('');
-          },
-            itemCount: _productIds.length,
-          )
-        ),
-      ],
-    ));
+              ));
   }
 
-   _buildPremiumProductTile(pakageId, pakageName)  {
+  _buildPremiumProductTile(pakageId, pakageName) {
     ProductDetails pd = findProductDetail(pakageId)!;
     return Column(
       children: [
@@ -282,7 +292,8 @@ class _PurchaseState extends State<Purchase> {
                       color: Theme.of(context).primaryColor,
                     ),
                     height: 35,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
@@ -290,7 +301,8 @@ class _PurchaseState extends State<Purchase> {
                         SizedBox(
                           width: 5,
                         ),
-                        Text('Recommanded', style: TextStyle(color: Colors.white))
+                        Text('Recommanded',
+                            style: TextStyle(color: Colors.white))
                       ],
                     )),
                 Padding(
@@ -306,7 +318,8 @@ class _PurchaseState extends State<Purchase> {
                               TextSpan(
                                   text: pd.price,
                                   // 'Price',
-                                  style: const TextStyle(fontSize: 25, color: Colors.white)),
+                                  style: const TextStyle(
+                                      fontSize: 25, color: Colors.white)),
                             ],
                           )),
                           const SizedBox(
@@ -314,7 +327,9 @@ class _PurchaseState extends State<Purchase> {
                           ),
                           Text(pd.description,
                               // 'Description',
-                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16)),
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 16)),
                         ],
                       ),
                       const Expanded(
@@ -325,7 +340,6 @@ class _PurchaseState extends State<Purchase> {
                     ],
                   ),
                 ),
-
                 GestureDetector(
                   onTap: () {
                     if (isUserPremium == false) _buyProduct(pd);
@@ -339,7 +353,9 @@ class _PurchaseState extends State<Purchase> {
                     width: 200,
                     alignment: Alignment.center,
                     child: Text(
-                      isUserPremium ? 'Active' : 'Get '+pakageName+' Pakage',
+                      isUserPremium
+                          ? 'Active'
+                          : 'Get ' + pakageName + ' Pakage',
                       style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -367,7 +383,7 @@ class _PurchaseState extends State<Purchase> {
     }
     final Widget storeHeader = ListTile(
       leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable ? Colors.green : ThemeData.light().errorColor),
+          color: _isAvailable ? Colors.green : Colors.red),
       title: Text(
           'Pakages are ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
     );
@@ -377,8 +393,7 @@ class _PurchaseState extends State<Purchase> {
       children.addAll([
         const Divider(),
         ListTile(
-          title: Text('Not connected',
-              style: TextStyle(color: ThemeData.light().errorColor)),
+          title: Text('Not connected', style: TextStyle(color: Colors.red)),
           subtitle: const Text('Unable to connect to the payments processor.'),
         ),
       ]);
@@ -411,7 +426,6 @@ class _PurchaseState extends State<Purchase> {
     _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
   }
 
-
   void showPendingUI() {
     //Step: 1, case:1
     setState(() {
@@ -433,13 +447,14 @@ class _PurchaseState extends State<Purchase> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('ok'))
+                      child: const Text('ok'),)
                 ],
-              ));
-    });
+              ),);
+    },);
   }
 
-  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) async {
+  void _listenToPurchaseUpdated(
+      List<PurchaseDetails> purchaseDetailsList) async {
     for (var purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.pending) {
         //Step: 1, case:1

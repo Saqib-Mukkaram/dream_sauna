@@ -395,7 +395,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
     }
     final Widget storeHeader = ListTile(
       leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable ? Colors.green : ThemeData.light().errorColor),
+          color: _isAvailable ? Colors.green : Colors.red),
       title: Text(
           'Pakages are ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
     );
@@ -405,8 +405,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
       children.addAll([
         const Divider(),
         ListTile(
-          title: Text('Not connected',
-              style: TextStyle(color: ThemeData.light().errorColor)),
+          title: Text('Not connected', style: TextStyle(color: Colors.red)),
           subtitle: const Text('Unable to connect to the payments processor.'),
         ),
       ]);

@@ -214,22 +214,25 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 10,
                       ),
                       Container(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.pin_drop,
-                              size: 16,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            if (businessAddress != null) ...[
-                              Text(businessAddress,
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.grey)),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.pin_drop,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              if (businessAddress != null) ...[
+                                Text(businessAddress,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.grey)),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                       SizedBox(
