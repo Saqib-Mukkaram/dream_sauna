@@ -608,6 +608,8 @@ class _BookingNavBarState extends State<BookingNavBar> {
               ],
             ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFF099BBB),
+          foregroundColor: Colors.white,
           onPressed: () => _showAddEventDialog(),
           label: const Text('Add Booking')),
     );

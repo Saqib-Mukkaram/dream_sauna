@@ -287,7 +287,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
         Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              color: c1,
+              color: Colors.grey,
             ),
             width: MediaQuery.of(context).size.width - 50,
             child: Column(
@@ -297,7 +297,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(14),
                           topRight: Radius.circular(14)),
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.black,
                     ),
                     height: 35,
                     padding:
@@ -309,7 +309,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
                         SizedBox(
                           width: 5,
                         ),
-                        Text('Recommanded',
+                        Text('Recommended',
                             style: TextStyle(color: Colors.white))
                       ],
                     )),
@@ -338,7 +338,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
                             pd.description,
                             // 'Description',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColor,
+                                color: Colors.white,
                                 fontSize: 16),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -360,7 +360,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: isUserPremium ? c4 : c2,
+                      color: isUserPremium ? c4 : Colors.white,
                     ),
                     width: 200,
                     alignment: Alignment.center,

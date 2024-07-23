@@ -154,6 +154,7 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
                         child: Column(
                           children: [
                             Container(
+                              padding: EdgeInsets.all(8),
                                 color: Colors.white,
                                 child: Image.network(
                                   qrCode,
@@ -461,10 +462,10 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
       });
     }
 
-    setState(() {
-      String jsonsDataString = response.toString();
-      details = jsonDecode(jsonsDataString);
-    });
+    // setState(() {
+    //   String jsonsDataString = response.toString();
+    //   details = jsonDecode(jsonsDataString);
+    // });
 
     return "Success";
   }

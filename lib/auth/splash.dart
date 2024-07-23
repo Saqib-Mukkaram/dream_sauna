@@ -4,7 +4,6 @@ import 'package:dream_sauna/auth/login.dart';
 import 'package:dream_sauna/pages/home.dart';
 import 'package:dream_sauna/services/service.dart';
 
-
 class splachScreen extends StatefulWidget {
   const splachScreen({Key? key}) : super(key: key);
 
@@ -27,8 +26,6 @@ class _splachScreenState extends State<splachScreen> {
     // Navigator.pushNamed(context, '/sign-in');
   }
 
-
-
   getUser() async {
     await UserService().getUser().then((value) {
       if (value != null) {
@@ -36,17 +33,17 @@ class _splachScreenState extends State<splachScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => HomeScreen(
-                  index: 0,
-                  userData: 0,
-                )),
-                (route) => false);
+                      index: 0,
+                      userData: 0,
+                    )),
+            (route) => false);
       } else {
         // Navigator.push(
         //     context, MaterialPageRoute(builder: (context) => logInScreen()));
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => LogInScreeen()),
-                (route) => false);
+            (route) => false);
       }
     });
   }
@@ -54,8 +51,8 @@ class _splachScreenState extends State<splachScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Text("checking"),
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

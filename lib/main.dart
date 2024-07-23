@@ -11,7 +11,7 @@ void main() {
     debugShowCheckedModeBanner: false,
     theme: ThemeStyle().themedata,
     home: splachScreen(),
-  ));
+  ),);
 }
 
 

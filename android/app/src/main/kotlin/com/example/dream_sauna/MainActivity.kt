@@ -1,4 +1,4 @@
-package com.calcsoft.dream_sauna
+package com.urbanmodels.dream_sauna
 
 import io.flutter.embedding.android.FlutterActivity
 
