@@ -224,7 +224,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                                   Container(
                                     padding: EdgeInsets.only(
                                         top: 5.0, bottom: 5.0),
-                                    child: Text(widget.bookingDetial['status']),
+                                    child: Text(widget.bookingDetial['status'].toString() == "0" ? "Pending" :widget.bookingDetial['status'].toString() == "1" ? "Processing"  : widget.bookingDetial['status'].toString() == "2"? "Completed" :"Not Found"),
                                   )
                                 ]),
 
@@ -235,9 +235,9 @@ class _BookingDetailsState extends State<BookingDetails> {
                   )
                 ]
                 ),
-            floatingActionButton: FloatingActionButton.extended(
-                onPressed: () => {},
-                label: const Text('Change Status')),
+            // floatingActionButton: FloatingActionButton.extended(
+            //     onPressed: () => {},
+            //     label: const Text('Change Status')),
           )
               )
       );

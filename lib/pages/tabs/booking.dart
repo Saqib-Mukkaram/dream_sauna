@@ -581,20 +581,27 @@ class _BookingNavBarState extends State<BookingNavBar> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  TextButton(
-                                    child: const Text('Booking Details'),
-                                    onPressed: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => BookingDetails(bookingDetial: myBookings[index])));
-                                    },
-                                  ),
+                                 Container(
+                                   margin: EdgeInsets.only(left: 10,bottom: 10),
+                                   decoration: BoxDecoration(
+                                     color: Colors.white,
+      borderRadius: BorderRadius.circular(8)
+                                   ),
+                                   child:  TextButton(
+                                     child: const Text('Booking Details'),
+                                     onPressed: () {
+                                       Navigator.push(context,
+                                           MaterialPageRoute(builder: (context) => BookingDetails(bookingDetial: myBookings[index])));
+                                     },
+                                   ),
+                                 ),
                                   const SizedBox(width: 8),
-                                  TextButton(
-                                    child: const Text('Status'),
-                                    onPressed: () {
-                                      /* ... */
-                                    },
-                                  ),
+                                  // TextButton(
+                                  //   child: const Text('Status'),
+                                  //   onPressed: () {
+                                  //     /* ... */
+                                  //   },
+                                  // ),
                                   const SizedBox(width: 8),
                                 ],
                               ),

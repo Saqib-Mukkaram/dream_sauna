@@ -10,6 +10,7 @@ void main() {
   runApp( GetMaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeStyle().themedata,
+
     home: splachScreen(),
   ),);
 }

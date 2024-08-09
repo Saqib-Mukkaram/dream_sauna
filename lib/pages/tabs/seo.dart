@@ -21,7 +21,7 @@ List<String> isoIds = <String>[];
 List<String> _productIds = <String>[];
 
 class _SeoNavBarState extends State<SeoNavBar> {
-  List pakages = [];
+  List<dynamic> pakages = [];
   bool loader = false;
   bool isUserPremium = true;
 
@@ -38,37 +38,31 @@ class _SeoNavBarState extends State<SeoNavBar> {
   var userToken;
   String? name;
 
-  //---------------------------------//
   @override
   void initState() {
-    getuser();
-    //step:1
-    // final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
-    // _subscription = purchaseUpdated.listen((purchaseDetailsList) {
-    //   _listenToPurchaseUpdated(purchaseDetailsList);
-    // }, onDone: () {
-    //   _subscription.cancel();
-    // }, onError: (error) {});
-    //
-    // //step: 2
-    // initStoreInfo();
-
     super.initState();
+    getuser();
   }
 
   getuser() async {
     setState(() {
       loader = true;
     });
-    await UserService().getUser().then((value) {
+    try {
+      var value = await UserService().getUser();
       userToken = value["data"]["api_token"];
       name = value["data"]["name"];
+      getPakages();
+      getAndroidId();
+      isoId();
+    } catch (error) {
+      // Handle the error appropriately here
+      print('Error getting user: $error');
+    } finally {
       setState(() {
-        getPakages();
-        getAndroidId();
-        isoId();
+        loader = false;
       });
-    });
+    }
   }
 
   getPakages() async {
@@ -78,7 +72,7 @@ class _SeoNavBarState extends State<SeoNavBar> {
     var url = Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages');
     var response = await http.get(url, headers: {
       "Accept": "application/json",
-      "Authorization": "Bearer " + userToken.toString()
+      "Authorization": "Bearer $userToken"
     });
     if (response.statusCode == 200) {
       setState(() {
@@ -86,8 +80,9 @@ class _SeoNavBarState extends State<SeoNavBar> {
         loader = false;
       });
     } else {
+      // Handle the error appropriately here
       setState(() {
-        loader = true;
+        loader = false;
       });
     }
   }
@@ -96,11 +91,10 @@ class _SeoNavBarState extends State<SeoNavBar> {
     setState(() {
       loader = true;
     });
-    var url = Uri.parse(
-        'http://calcsoft.saunamaterialkit.com/api/pakages/android/ids');
+    var url = Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages/android/ids');
     var response = await http.get(url, headers: {
       "Accept": "application/json",
-      "Authorization": "Bearer " + userToken.toString()
+      "Authorization": "Bearer $userToken"
     });
     if (response.statusCode == 200) {
       setState(() {
@@ -108,20 +102,20 @@ class _SeoNavBarState extends State<SeoNavBar> {
             .map((e) => e as String)
             .toList();
         _productIds = Platform.isAndroid ? androidIds : isoIds;
-        final Stream<List<PurchaseDetails>> purchaseUpdated =
-            _inAppPurchase.purchaseStream;
+        final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
         _subscription = purchaseUpdated.listen((purchaseDetailsList) {
           _listenToPurchaseUpdated(purchaseDetailsList);
         }, onDone: () {
           _subscription.cancel();
-        }, onError: (error) {});
-
-        //step: 2
+        }, onError: (error) {
+          // Handle the error appropriately here
+        });
         initStoreInfo();
       });
     } else {
+      // Handle the error appropriately here
       setState(() {
-        loader = true;
+        loader = false;
       });
       print(response.statusCode);
     }
@@ -131,33 +125,31 @@ class _SeoNavBarState extends State<SeoNavBar> {
     setState(() {
       loader = true;
     });
-    var url =
-        Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages/iso/ids');
+    var url = Uri.parse('http://calcsoft.saunamaterialkit.com/api/pakages/iso/ids');
     var response = await http.get(url, headers: {
       "Accept": "application/json",
-      "Authorization": "Bearer " + userToken.toString()
+      "Authorization": "Bearer $userToken"
     });
     if (response.statusCode == 200) {
       setState(() {
-        loader = false;
         isoIds = (jsonDecode(response.body) as List)
             .map((e) => e as String)
             .toList();
         _productIds = Platform.isAndroid ? androidIds : isoIds;
-        final Stream<List<PurchaseDetails>> purchaseUpdated =
-            _inAppPurchase.purchaseStream;
+        final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
         _subscription = purchaseUpdated.listen((purchaseDetailsList) {
           _listenToPurchaseUpdated(purchaseDetailsList);
         }, onDone: () {
           _subscription.cancel();
-        }, onError: (error) {});
-
-        //step: 2
+        }, onError: (error) {
+          // Handle the error appropriately here
+        });
         initStoreInfo();
       });
     } else {
+      // Handle the error appropriately here
       setState(() {
-        loader = true;
+        loader = false;
       });
       print(response.statusCode);
     }
@@ -177,13 +169,12 @@ class _SeoNavBarState extends State<SeoNavBar> {
     }
 
     ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(_productIds.toSet());
+    await _inAppPurchase.queryProductDetails(_productIds.toSet());
     if (productDetailResponse.error != null) {
       setState(() {
         _queryProductError = productDetailResponse.error!.message;
         _isAvailable = isAvailable;
         _products = productDetailResponse.productDetails;
-
         _notFoundIds = productDetailResponse.notFoundIDs;
         _purchasePending = false;
         _loading = false;
@@ -196,7 +187,6 @@ class _SeoNavBarState extends State<SeoNavBar> {
         _queryProductError = null;
         _isAvailable = isAvailable;
         _products = productDetailResponse.productDetails;
-
         _notFoundIds = productDetailResponse.notFoundIDs;
         _purchasePending = false;
         _loading = false;
@@ -212,10 +202,108 @@ class _SeoNavBarState extends State<SeoNavBar> {
       _loading = false;
     });
   }
+  Card _buildConnectionCheckTile() {
+    if (_loading) {
+      return const Card(child: ListTile(title: Text('Trying to connect...')));
+    }
+    final Widget storeHeader = ListTile(
+      leading: Icon(_isAvailable ? Icons.check : Icons.block,
+          color: _isAvailable ? Colors.green : Colors.red),
+      title: Text(
+          'Pakages are ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
+    );
+    final List<Widget> children = <Widget>[storeHeader];
+
+    if (!_isAvailable) {
+      children.addAll([
+        const Divider(),
+        ListTile(
+          title: Text('Not connected', style: TextStyle(color: Colors.red)),
+          subtitle: const Text('Unable to connect to the payments processor.'),
+        ),
+      ]);
+    }
+    return Card(child: Column(children: children));
+  }
+
+  ProductDetails? findProductDetail(String id) {
+    for (ProductDetails pd in _products) {
+      if (pd.id == id) return pd;
+    }
+    return null;
+  }
+
+  void _buyProduct(ProductDetails productDetails) async {
+    late PurchaseParam purchaseParam;
+
+    if (Platform.isAndroid) {
+      purchaseParam = GooglePlayPurchaseParam(
+          productDetails: productDetails,
+          applicationUserName: null,
+          changeSubscriptionParam: null);
+    } else {
+      purchaseParam = PurchaseParam(
+        productDetails: productDetails,
+        applicationUserName: null,
+      );
+    }
+    //buying consumable product
+    _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
+  }
+
+  void showPendingUI() {
+    //Step: 1, case:1
+    setState(() {
+      _purchasePending = true;
+    });
+  }
+
+  void handleError(IAPError error) {
+    //Step: 1, case:2
+    setState(() {
+      _purchasePending = false;
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(error.details),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('ok'))
+            ],
+          ));
+    });
+  }
+
+  void _listenToPurchaseUpdated(
+      List<PurchaseDetails> purchaseDetailsList) async {
+    for (var purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.pending) {
+        //Step: 1, case:1
+        showPendingUI();
+      } else {
+        if (purchaseDetails.status == PurchaseStatus.error) {
+          //Step: 1, case:2
+          handleError(purchaseDetails.error!);
+        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+            purchaseDetails.status == PurchaseStatus.restored) {
+          //Step: 1, case:3
+          // verifyAndDeliverProduct(purchaseDetails);
+        }
+
+        if (purchaseDetails.pendingCompletePurchase) {
+          await _inAppPurchase.completePurchase(purchaseDetails);
+        }
+      }
+    }
+  }
 
   @override
   void dispose() {
-    _subscription.cancel();
+    _subscription?.cancel();
     super.dispose();
   }
 
@@ -386,105 +474,9 @@ class _SeoNavBarState extends State<SeoNavBar> {
           ),
         )
       ],
+
     );
   }
 
-  Card _buildConnectionCheckTile() {
-    if (_loading) {
-      return const Card(child: ListTile(title: Text('Trying to connect...')));
-    }
-    final Widget storeHeader = ListTile(
-      leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable ? Colors.green : Colors.red),
-      title: Text(
-          'Pakages are ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
-    );
-    final List<Widget> children = <Widget>[storeHeader];
 
-    if (!_isAvailable) {
-      children.addAll([
-        const Divider(),
-        ListTile(
-          title: Text('Not connected', style: TextStyle(color: Colors.red)),
-          subtitle: const Text('Unable to connect to the payments processor.'),
-        ),
-      ]);
-    }
-    return Card(child: Column(children: children));
-  }
-
-  ProductDetails? findProductDetail(String id) {
-    for (ProductDetails pd in _products) {
-      if (pd.id == id) return pd;
-    }
-    return null;
-  }
-
-  void _buyProduct(ProductDetails productDetails) async {
-    late PurchaseParam purchaseParam;
-
-    if (Platform.isAndroid) {
-      purchaseParam = GooglePlayPurchaseParam(
-          productDetails: productDetails,
-          applicationUserName: null,
-          changeSubscriptionParam: null);
-    } else {
-      purchaseParam = PurchaseParam(
-        productDetails: productDetails,
-        applicationUserName: null,
-      );
-    }
-    //buying consumable product
-    _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
-  }
-
-  void showPendingUI() {
-    //Step: 1, case:1
-    setState(() {
-      _purchasePending = true;
-    });
-  }
-
-  void handleError(IAPError error) {
-    //Step: 1, case:2
-    setState(() {
-      _purchasePending = false;
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text('Error'),
-                content: Text(error.details),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('ok'))
-                ],
-              ));
-    });
-  }
-
-  void _listenToPurchaseUpdated(
-      List<PurchaseDetails> purchaseDetailsList) async {
-    for (var purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        //Step: 1, case:1
-        showPendingUI();
-      } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-          //Step: 1, case:2
-          handleError(purchaseDetails.error!);
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          //Step: 1, case:3
-          // verifyAndDeliverProduct(purchaseDetails);
-        }
-
-        if (purchaseDetails.pendingCompletePurchase) {
-          await _inAppPurchase.completePurchase(purchaseDetails);
-        }
-      }
-    }
-  }
 }

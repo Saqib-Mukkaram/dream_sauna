@@ -1,20 +1,29 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:dream_sauna/services/service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../utils/image_share.dart';
+import 'package:path/path.dart';
 class DashboardNavBar extends StatefulWidget {
   const DashboardNavBar({Key? key}) : super(key: key);
 
   @override
   State<DashboardNavBar> createState() => _DashboardNavBarState();
 }
-enum SocialMedia  {facebook, twitter, whatsapp}
+enum SocialMedia { facebook, twitter, whatsapp }
+
 class _DashboardNavBarState extends State<DashboardNavBar> {
 
   var grandTotal;
@@ -23,7 +32,7 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
 
   var details;
 
- static var qrCode;
+  static var qrCode;
   var userToken;
   var marchentId;
   var type;
@@ -35,11 +44,9 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
 
   String start = "";
   String end = "";
-  @override
 
   @override
-
-
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -67,6 +74,7 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
       });
     });
   }
+
   getTotal() async {
     setState(() {
       loader = true;
@@ -86,12 +94,10 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
 
     if (response.statusCode == 200) {
       setState(() {
-
         var result = jsonDecode(response.body);
         grandTotal = result["data"][0]["commission"];
         // userTable = details["data"];
         loader = false;
-
       });
     } else {
       setState(() {
@@ -112,8 +118,14 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
   }
 
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
       body: loader
           ? const SpinKitFadingCircle(
@@ -121,317 +133,403 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
         color: Colors.black,
         size: 50.0,
       )
-          :SingleChildScrollView(
+          : SingleChildScrollView(
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              Container(
+            child: Column(
+              children: [
+                Container(
 
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 50,
-                    ),
-                    Container(
-                        child: Text( type == 'merchant' ? " MERCHANT ID # " : "CONTRACTOR ID #")
-                    ),
-                    Container(
-                        child: Text(marchentId.toString())
-                    ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 50,
+                      ),
+                      Container(
+                          child: Text(type == 'merchant'
+                              ? " MERCHANT ID # "
+                              : "CONTRACTOR ID #")
+                      ),
+                      Container(
+                          child: Text(marchentId.toString())
+                      ),
 
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
+                Container(
 
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8),
-                                color: Colors.white,
-                                child: Image.network(
-                                  qrCode,
-                                  height: 170,
-                                  width: 150,
-                                )
-                            ),
-                            Container(
-                              child: Text(
-                                "Share QR Code",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )
-                          ],
-                        )
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Container(
-                        child: Column(
-                          children: [
-                            Container(
-
-                              // margin: const EdgeInsets.only(top: 40, bottom: 60),
-                              padding: const EdgeInsets.all(25),
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blueGrey.shade100), borderRadius: BorderRadius.all(Radius.circular(10))),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "My Earning in",
-                                    style: TextStyle(),
-                                  ),
-                                  const Text(
-                                    " this month",
-                                    style: TextStyle(),
-                                  ),
-                                  grandTotal == null ? const SpinKitFadingCircle(
-                                    // duration: Duration(milliseconds: 10000),
-                                    color: Colors.black,
-                                    // size: 50.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                          child: Column(
+                            children: [
+                              Container(
+                                  padding: EdgeInsets.all(8),
+                                  color: Colors.white,
+                                  child: Image.network(
+                                    qrCode,
+                                    height: 170,
+                                    width: 150,
                                   )
-                                      : Padding(
-                                    padding: EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      "\$" + grandTotal.toString(),
-                                      style: TextStyle(fontSize: 24),
-                                    ),
-                                  )
-                                ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      FontAwesomeIcons.facebook,
-                                      color: Colors.blue,
-                                      size: 30,
+                              Container(
+                                child: Text(
+                                  "Share QR Code",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
+                            ],
+                          )
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Container(
+                          child: Column(
+                            children: [
+                              Container(
+
+                                // margin: const EdgeInsets.only(top: 40, bottom: 60),
+                                padding: const EdgeInsets.all(25),
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(color: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.blueGrey.shade100),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10))),
+                                child: Column(
+                                  children: [
+                                    const Text(
+                                      "My Earning in",
+                                      style: TextStyle(),
                                     ),
-                                    tooltip: 'Share on facebook',
-                                    onPressed: ()  =>    share(SocialMedia.facebook),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      FontAwesomeIcons.twitter,
-                                      color: Colors.lightBlueAccent,
-                                      size: 30,
+                                    const Text(
+                                      " this month",
+                                      style: TextStyle(),
                                     ),
-                                    tooltip: 'Share on twitter',
-                                    onPressed: () => share(SocialMedia.twitter),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      FontAwesomeIcons.whatsapp,
-                                      color: Colors.green,
-                                      size: 30,
-                                    ),
-                                    tooltip: 'Share on whatsapp',
-                                    onPressed: () => share(SocialMedia.whatsapp),
-                                  ),
-                                ],
+                                    grandTotal == null
+                                        ? const SpinKitFadingCircle(
+                                      // duration: Duration(milliseconds: 10000),
+                                      color: Colors.black,
+                                      // size: 50.0,
+                                    )
+                                        : Padding(
+                                      padding: EdgeInsets.only(top: 20),
+                                      child: Text(
+                                        "\$" + grandTotal.toString(),
+                                        style: TextStyle(fontSize: 24),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        FontAwesomeIcons.facebook,
+                                        color: Colors.blue,
+                                        size: 30,
+                                      ),
+                                      tooltip: 'Share on facebook',
+                                      onPressed: () async {
+                                        await UserService()
+                                            .getUser()
+                                            .then((value) async {
+                                          var qrCode = value["data"]["qrcode_url"];
+                                          var username = value["data"]["name"];
+                                          // var name = value["data"]["name"];
+                                          var email = value["data"]["email"];
+                                          // var phone = value["data"]["phone"];
+                                          // var address = value["data"]["address"];
+                                          // var businessName = value["data"]["business_name"];
+                                          var businessAddress = value["data"]["business_address"];
+                                          var type = value["data"]["type"];
+                                          XFile shareFile = await fileFromImageUrl(
+                                              qrCode, username);
+                                          Get.to(ImageShare(
+                                            username: username,
+                                            qrCode: shareFile,
+                                            email: email,
+                                            // phone: phone,
+                                            // address: address,
+                                            // businessName: businessName,
+                                            bussinessAddress: businessAddress,
+                                            type: type,
+                                          ));
+                                        });
+                                        },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        FontAwesomeIcons.twitter,
+                                        color: Colors.lightBlueAccent,
+                                        size: 30,
+                                      ),
+                                      tooltip: 'Share on twitter',
+                                        onPressed: () async {
+                                          await UserService()
+                                              .getUser()
+                                              .then((value) async {
+                                            var qrCode = value["data"]["qrcode_url"];
+                                            var username = value["data"]["name"];
+                                            // var name = value["data"]["name"];
+                                            var email = value["data"]["email"];
+                                            // var phone = value["data"]["phone"];
+                                            // var address = value["data"]["address"];
+                                            // var businessName = value["data"]["business_name"];
+                                            var businessAddress = value["data"]["business_address"];
+                                            var type = value["data"]["type"];
+                                            XFile shareFile = await fileFromImageUrl(
+                                                qrCode, username);
+                                            Get.to(ImageShare(
+                                              username: username,
+                                              qrCode: shareFile,
+                                              email: email,
+                                              // phone: phone,
+                                              // address: address,
+                                              // businessName: businessName,
+                                              bussinessAddress: businessAddress,
+                                              type: type,
+                                            ));
+                                          });
+                                        },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        FontAwesomeIcons.whatsapp,
+                                        color: Colors.green,
+                                        size: 30,
+                                      ),
+                                      tooltip: 'Share on whatsapp',
+                                        onPressed: () async {
+                                          await UserService()
+                                              .getUser()
+                                              .then((value) async {
+                                            var qrCode = value["data"]["qrcode_url"];
+                                            var username = value["data"]["name"];
+                                            // var name = value["data"]["name"];
+                                            var email = value["data"]["email"];
+                                            // var phone = value["data"]["phone"];
+                                            // var address = value["data"]["address"];
+                                            // var businessName = value["data"]["business_name"];
+                                            var businessAddress = value["data"]["business_address"];
+                                            var type = value["data"]["type"];
+                                            XFile shareFile = await fileFromImageUrl(
+                                                qrCode, username);
+                                            Get.to(ImageShare(
+                                              username: username,
+                                              qrCode: shareFile,
+                                              email: email,
+                                              // phone: phone,
+                                              // address: address,
+                                              // businessName: businessName,
+                                              bussinessAddress: businessAddress,
+                                              type: type,
+                                            ));
+                                          });
+                                        },
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  height: height * 0.05,
+                  width: width * 0.9,
+                  decoration: BoxDecoration(color: Colors.blueGrey.shade500),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          "Date/Time",
+                          style:
+                          TextStyle(color: Colors.white, fontSize: 10),
+                        ),
+                      ),
+                      const Text(
+                        "Pre\n estimate price",
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                      const Text(
+                        "INVOICE\n PRICE",
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                      const Text(
+                        "STATUS",
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: Text(
+                          "5%\n Commission",
+                          style:
+                          TextStyle(color: Colors.white, fontSize: 10),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                tableloader
+                    ? const SpinKitFadingCircle(
+                  // duration: Duration(milliseconds: 10000),
+                  color: Colors.black,
+                  size: 50.0,
+                )
+                    : Table(
+                  border: TableBorder.all(color: Colors.grey),
+                  children: List.generate(
+                    userTable.length,
+                        (index) =>
+                        TableRow(children: [
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              userTable[index]["date"].toString(),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              userTable[index]["estimate_price"]
+                                  .toString(),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              userTable[index]["invoice_price"],
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: userTable[index]["order_status"] ==
+                                "completed"
+                                ? Text(
+                              "PAID",
+                              style: TextStyle(fontSize: 12),
                             )
-                          ],
-                        )
-                    ),
-                  ],
+                                : Text(
+                              "UNPAID",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              userTable[index]["commission_status"],
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ]),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Container(
-                height: height * 0.05,
-                width: width * 0.9,
-                decoration: BoxDecoration(color: Colors.blueGrey.shade500),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "Date/Time",
-                        style:
-                        TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                    const Text(
-                      "Pre\n estimate price",
-                      style: TextStyle(color: Colors.white, fontSize: 10),
-                    ),
-                    const Text(
-                      "INVOICE\n PRICE",
-                      style: TextStyle(color: Colors.white, fontSize: 10),
-                    ),
-                    const Text(
-                      "STATUS",
-                      style: TextStyle(color: Colors.white, fontSize: 10),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Text(
-                        "5%\n Commission",
-                        style:
-                        TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              tableloader
-                  ? const SpinKitFadingCircle(
-                // duration: Duration(milliseconds: 10000),
-                color: Colors.black,
-                size: 50.0,
-              )
-                  : Table(
-                border: TableBorder.all(color: Colors.grey),
-                children: List.generate(
-                  userTable.length,
-                      (index) => TableRow(children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        userTable[index]["date"].toString(),
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        userTable[index]["estimate_price"]
-                            .toString(),
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        userTable[index]["invoice_price"],
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: userTable[index]["order_status"] ==
-                          "completed"
-                          ? Text(
-                        "PAID",
-                        style: TextStyle(fontSize: 12),
-                      )
-                          : Text(
-                        "UNPAID",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        userTable[index]["commission_status"],
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ]),
-                ),
-              ),
-              Table(
-                  border: TableBorder.all(color: Colors.white),
-                  children: [
-                    const TableRow(children: [
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
+                Table(
+                    border: TableBorder.all(color: Colors.white),
+                    children: [
+                      const TableRow(children: [
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
+                      ]),
+                      const TableRow(children: [
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ]),
                     ]),
-                    const TableRow(children: [
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          "",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ]),
-                  ]),
-              const SizedBox(
-                height: 40,
-              )
-            ],
-          )
+                const SizedBox(
+                  height: 40,
+                )
+              ],
+            )
         ),
 
       ),
@@ -471,27 +569,50 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
   }
 
   Future share(socialPlatform) async {
+    // final subject = 'My card';
+    // final text = 'kjd jfd ksfj dskf ';
+    final urlShare = Uri.encodeComponent(
+        'http://calcsoft.saunamaterialkit.com/card/share/' +
+            marchentId.toString());
 
-  // final subject = 'My card';
-  // final text = 'kjd jfd ksfj dskf ';
-  final urlShare = Uri.encodeComponent('http://calcsoft.saunamaterialkit.com/card/share/'+marchentId.toString());
-
-  final urls = {
-      SocialMedia.facebook :  'https://www.facebook.com/sharer/sharer.php?u=$urlShare',
-      SocialMedia.twitter :  'http://twitter.com/share?url=$urlShare',
-      SocialMedia.whatsapp :  'https://api.whatsapp.com/send?url=$urlShare'
+    final urls = {
+      SocialMedia
+          .facebook: 'https://www.facebook.com/sharer/sharer.php?u=$urlShare',
+      SocialMedia.twitter: 'http://twitter.com/share?url=$urlShare',
+      SocialMedia.whatsapp: 'https://api.whatsapp.com/send?url=$urlShare'
     };
-  // print(urls[socialPlatform]);
-  final url = urls[socialPlatform]!;
+    // print(urls[socialPlatform]);
+    final url = urls[socialPlatform]!;
 
-  // await launchUrl(Uri.parse(url));
+    // await launchUrl(Uri.parse(url));
 
-  // setState(() {
-  //   loader = true;
-  // });
+    // setState(() {
+    //   loader = true;
+    // });
 
-  if(await canLaunchUrl(Uri.parse(url))){
-    await launchUrl(Uri.parse(url));
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    }
   }
-  }
+}
+
+fileFromImageUrl(String url, String userName) async {
+  final response = await http.get(
+    Uri.parse(url),
+  );
+
+  final documentDirectory = await getApplicationDocumentsDirectory();
+
+  var randomNumber = Random();
+
+  final file = File(
+    join(
+      documentDirectory.path,
+      "${randomNumber.nextInt(100)}_$userName.png",
+    ),
+  );
+
+  file.writeAsBytesSync(response.bodyBytes);
+
+  return XFile(file.path);
 }
